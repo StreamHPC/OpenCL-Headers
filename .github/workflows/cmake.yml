@@ -4,11 +4,10 @@ on: [push, pull_request]
 
 jobs:
   linux-gcc:
-    runs-on: ubuntu-18.04
+    runs-on: streamhpc/opencl-sdk-base:ubuntu-18.04-20211119
     strategy:
       matrix:
-        #VER: [7, 8, 9]
-        VER: [7, 9] # gcc-8 is not installed on the Ubuntu 18.04 image
+        VER: [7]
         EXT: [ON, OFF]
         GEN: [Unix Makefiles, Ninja]
         VAR: [Debug, Release]
@@ -110,6 +109,7 @@ jobs:
         -j`nproc`
 
   windows-msvc:
+    if: false
     runs-on: windows-latest
     strategy:
       matrix:
@@ -256,6 +256,7 @@ jobs:
         cmake --build %GITHUB_WORKSPACE%\downstream\pkgconfig\sdk --config Debug
 
   macos-gcc:
+    if: false
     runs-on: macos-latest
     strategy:
       matrix:
