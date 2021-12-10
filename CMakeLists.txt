@@ -15,22 +15,42 @@ include(GNUInstallDirs)
 
 add_library(Headers INTERFACE)
 add_library(OpenCL::Headers ALIAS Headers)
-target_include_directories(Headers
-  BEFORE
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
+
+if(CMAKE_SYSTEM_NAME MATCHES Darwin)
+  execute_process(
+    COMMAND ln -shf ${CMAKE_CURRENT_SOURCE_DIR}/CL ${CMAKE_CURRENT_BINARY_DIR}/OpenCL
+  )
+  target_include_directories(Headers
+    BEFORE
+    INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  )
+else()
+  target_include_directories(Headers
+    BEFORE
+    INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  )
+endif()
 
 install(
   TARGETS Headers
   EXPORT OpenCLHeadersTargets
 )
-
+if(CMAKE_SYSTEM_NAME MATCHES Darwin)
+  install(CODE "
+    execute_process(
+      COMMAND ln -shf CL ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/OpenCL
+    )"
+  )
+endif()
 install(
   DIRECTORY CL
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+
 export(
   EXPORT OpenCLHeadersTargets
   FILE ${PROJECT_BINARY_DIR}/OpenCLHeaders/OpenCLHeadersTargets.cmake
