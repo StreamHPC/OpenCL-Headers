@@ -16,7 +16,6 @@ include(GNUInstallDirs)
 add_library(Headers INTERFACE)
 add_library(OpenCL::Headers ALIAS Headers)
 target_include_directories(Headers
-  SYSTEM
   BEFORE
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
