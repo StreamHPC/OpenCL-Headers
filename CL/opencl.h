@@ -21,6 +21,8 @@
 extern "C" {
 #endif
 
+# pragma message("I was here in CL.")
+
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
 #include <CL/cl_ext.h>
