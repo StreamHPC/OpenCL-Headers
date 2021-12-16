@@ -25,6 +25,11 @@ if(CMAKE_SYSTEM_NAME MATCHES Darwin)
       $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
+  install(CODE "
+    execute_process(
+      COMMAND ln -shf CL ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/OpenCL
+    )"
+  )
 else()
   target_include_directories(Headers
     INTERFACE
@@ -37,13 +42,6 @@ install(
   TARGETS Headers
   EXPORT OpenCLHeadersTargets
 )
-if(CMAKE_SYSTEM_NAME MATCHES Darwin)
-  install(CODE "
-    execute_process(
-      COMMAND ln -shf CL ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/OpenCL
-    )"
-  )
-endif()
 install(
   DIRECTORY CL
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
