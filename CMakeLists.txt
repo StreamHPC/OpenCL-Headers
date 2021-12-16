@@ -27,6 +27,7 @@ if(CMAKE_SYSTEM_NAME MATCHES Darwin)
   )
   install(CODE "
     execute_process(
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/CL
       COMMAND ln -shf CL ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/OpenCL
     )"
   )
