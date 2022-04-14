@@ -236,8 +236,7 @@ jobs:
         & cmake `
           --install "${env:GITHUB_WORKSPACE}\build" `
           --prefix "${env:GITHUB_WORKSPACE}\install" `
-          --config Release `
-          --target install
+          --config Release
 
     - name: Consume (PkgConfig - bare MSBuild)
       if: matrix.GEN == 'Visual Studio 17 2022'
