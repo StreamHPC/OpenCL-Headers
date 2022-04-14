@@ -114,17 +114,17 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        VER: [v142, v143]
-        EXT: [ON, OFF]
-        GEN: [Visual Studio 17 2022, Ninja Multi-Config]
-        BIN: [x64, x86]
-        STD: [99, 11, 17]
-#        include:
-#          - VER: v141
-#            EXT: ON
-#            GEN: [Visual Studio 17 2022]
-#            BIN: [x64]
-#            STD: 99
+#        VER: [v142, v143]
+#        EXT: [ON, OFF]
+#        GEN: [Visual Studio 17 2022, Ninja Multi-Config]
+#        BIN: [x64, x86]
+#        STD: [99, 11, 17]
+        include:
+          - VER: v141
+            EXT: ON
+            GEN: [Visual Studio 17 2022, Ninja Multi-Config]
+            BIN: [x64, x86]
+            STD: 99
     env:
       NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
       NINJA_ROOT: C:\Tools\Ninja
