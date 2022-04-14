@@ -220,7 +220,6 @@ jobs:
         }
 
     - name: Test
-      working-directory: ${{runner.workspace}}/OpenCL-Headers/build
       shell: pwsh
       run: |
         foreach ($Config in 'Release','Debug') { `
