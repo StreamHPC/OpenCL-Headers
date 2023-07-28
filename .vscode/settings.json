@@ -1,0 +1,8 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "/home/lorinc/tools/android-ndk-r25c/build/cmake/android.toolchain.cmake",
+        // "ANDROID_PLATFORM": "29",
+        "ANDROID_ABI": "x86_64",
+        "TEST_WITH_ADB": "ON",
+    }
+}

@@ -1,3 +1,5 @@
+option(TEST_WITH_ADB "Push and run the tests on Android via ADB")
+
 # Add a test for a given source file for each version of OpenCL
 function(add_header_test NAME SOURCE)
   # Some headers include system files which require anonymous structs
@@ -30,7 +32,16 @@ function(add_header_test NAME SOURCE)
       target_include_directories(${TEST_EXE}
         PUBLIC ${PROJECT_SOURCE_DIR}
       )
-      add_test(NAME ${TEST_EXE} COMMAND ${TEST_EXE})
+      if(TEST_WITH_ADB)
+        add_test(NAME ${TEST_EXE}
+          COMMAND
+            "${CMAKE_COMMAND}"
+            "-DEXE_PATH=$<TARGET_FILE:${TEST_EXE}>"
+            -P "${CMAKE_SOURCE_DIR}/scripts/run_test_with_adb.cmake"
+        )
+      else()
+        add_test(NAME ${TEST_EXE} COMMAND ${TEST_EXE})
+      endif()
     endif()
   endforeach(VERSION)
 endfunction(add_header_test)
