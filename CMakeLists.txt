@@ -7,7 +7,7 @@ if(TARGET Headers)
 endif()
 
 project(OpenCLHeaders
-  VERSION 2.2
+  VERSION 3.0
   LANGUAGES C # Ideally should be NONE, but GNUInstallDirs detects platform arch using try_compile
   # https://stackoverflow.com/questions/43379311/why-does-project-affect-cmakes-opinion-on-cmake-sizeof-void-p
 )
@@ -17,6 +17,7 @@ option(OPENCL_HEADERS_BUILD_CXX_TESTS "Enable support for OpenCL C headers testi
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(JoinPaths)
+include(Package)
 
 include(GNUInstallDirs)
 

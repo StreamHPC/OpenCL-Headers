@@ -164,15 +164,17 @@ jobs:
             BIN: 32
     env:
       CMAKE_EXE: /opt/Kitware/CMake/${{ matrix.CMAKE }}/bin/cmake
+      CPACK_EXE: /opt/Kitware/CMake/${{ matrix.CMAKE }}/bin/cpack
       CTEST_EXE: /opt/Kitware/CMake/${{ matrix.CMAKE }}/bin/ctest
 
     steps:
     - name: Checkout OpenCL-Headers
       uses: actions/checkout@v3
-      
+
     - name: Configure
       shell: bash
-      run: $CMAKE_EXE
+      run: mkdir $GITHUB_WORKSPACE/build && cd $GITHUB_WORKSPACE/build &&
+        $CMAKE_EXE
         -G "${{matrix.GEN}}"
         -D BUILD_TESTING=ON
         `if [[ "${{matrix.GEN}}" == "Unix Makefiles" ]]; then echo -D CMAKE_BUILD_TYPE=${{matrix.CONFIG}}; fi;`
@@ -183,8 +185,8 @@ jobs:
         -D CMAKE_CXX_COMPILER=${{matrix.CXX_COMPILER}}
         -D CMAKE_CXX_EXTENSIONS=OFF
         -D CMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install
-        -B$GITHUB_WORKSPACE/build
-        -H$GITHUB_WORKSPACE
+        -D CPACK_PACKAGING_INSTALL_PREFIX=/usr
+        $GITHUB_WORKSPACE
 
     - name: Build
       shell: bash
@@ -205,6 +207,37 @@ jobs:
         else
           $CTEST_EXE --output-on-failure -C Debug   --parallel `nproc`;
           $CTEST_EXE --output-on-failure -C Release --parallel `nproc`;
+        fi;
+
+    - name: Package DEB
+      shell: bash
+      run: $CPACK_EXE
+        --config "$GITHUB_WORKSPACE/build/CPackConfig.cmake"
+        -G DEB
+        -C Release
+        -B "$GITHUB_WORKSPACE/package-deb"
+
+    - name: Consume (Package DEB)
+      shell: bash
+      run: dpkg -i $GITHUB_WORKSPACE/package-deb/*.deb &&
+        mkdir $GITHUB_WORKSPACE/build_package && cd $GITHUB_WORKSPACE/build_package &&
+        $CMAKE_EXE
+        -G "${{matrix.GEN}}"
+        -D BUILD_TESTING=ON
+        `if [[ "${{matrix.GEN}}" == "Unix Makefiles" ]]; then echo -D CMAKE_BUILD_TYPE=${{matrix.CONFIG}}; fi;`
+        -D CMAKE_C_FLAGS="-Wall -Wextra -pedantic -Werror -m${{matrix.BIN}}"
+        -D CMAKE_C_COMPILER=${{matrix.C_COMPILER}}
+        -D CMAKE_C_EXTENSIONS=OFF
+        -D CMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror -m${{matrix.BIN}}"
+        -D CMAKE_CXX_COMPILER=${{matrix.CXX_COMPILER}}
+        -D CMAKE_CXX_EXTENSIONS=OFF
+        $GITHUB_WORKSPACE/tests/pkgconfig/bare &&
+        if [[ "${{matrix.GEN}}" == "Unix Makefiles" ]];
+        then
+          $CMAKE_EXE --build $GITHUB_WORKSPACE/build -- -j`nproc`;
+        else
+          $CMAKE_EXE --build $GITHUB_WORKSPACE/build --config Debug   -- -j`nproc`;
+          $CMAKE_EXE --build $GITHUB_WORKSPACE/build --config Release -- -j`nproc`;
         fi;
 
     - name: Test install
